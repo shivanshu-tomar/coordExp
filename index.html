@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Add a default marker to a web map</title>
+<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+<link href="https://api.mapbox.com/mapbox-gl-js/v2.6.0/mapbox-gl.css" rel="stylesheet">
+<script src="https://api.mapbox.com/mapbox-gl-js/v2.6.0/mapbox-gl.js"></script>
+<style>
+body { margin: 0; padding: 0; }
+#map { position: absolute; top: 0; bottom: 0; width: 100%; }
+</style>
+<script src='https://unpkg.com/@turf/turf@6/turf.min.js'></script>
+</head>
+<body>
+  <div style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+  <button onclick="saveLocationHandler()" class="btn btn-primary" id="save">Save your Location</button>
+   <p id = "latitude"></p>
+   <p id = "longitude"></p>
+  </div>
+  
+<script>
+  
+  var polygon = turf.polygon([[
+                    [77.5935524, 27.6057296],
+                    [77.5934214, 27.6057733],
+                    [77.5933995, 27.6058078],
+                    [77.5935757, 27.6056854],
+                    [77.5935524, 27.6057296]
+                ]], { name: 'poly1' });
+  const saveLocationHandler = function() {
+  
+  var geoOptions = {
+     enableHighAccuracy: true,
+     timeout:5000,
+     maximumAge: 0
+  }
+
+  var geoSuccess = function(position) {
+    startPos = position;
+    let lat = document.getElementById("latitude");
+    let log = document.getElementById("longitude");
+    lat.innerHTML = position.coords.longitude;
+    log.innerHTML = position.coords.latitude;
+    
+    var point = turf.point([position.coords.longitude,position.coords.latitude]);
+    console.log(turf.inside(point, polygon));
+  };
+  var geoError = function(error) {
+    console.log('Error occurred. Error code: ' + error.code);
+    // error.code can be:
+    //   0: unknown error
+    //   1: permission denied
+    //   2: position unavailable (error response from location provider)
+    //   3: timed out
+  };
+
+  navigator.geolocation.getCurrentPosition(geoSuccess, geoError, geoOptions);
+};
+// 	mapboxgl.accessToken = 'pk.eyJ1Ijoic2hpdmFuc2h1LXRvbWFyIiwiYSI6ImNrdnZ4dGJsNjFmeG8yd205MDA1bnFmYXIifQ.g5c5PSQus2XKQE1P8sPiDw';
+// const map = new mapboxgl.Map({
+// container: 'map',
+// style: 'mapbox://styles/mapbox/streets-v11',
+// center: [77.5934679,27.6057459],
+// zoom: 8
+// });
+ 
+// // Create a default Marker and add it to the map.
+// const marker1 = new mapboxgl.Marker()
+// .setLngLat([77.5934679,27.6057459])
+// .addTo(map);
+ 
+// Create a default Marker, colored black, rotated 45 degrees.
+
+</script>
+ 
+</body>
+</html>
